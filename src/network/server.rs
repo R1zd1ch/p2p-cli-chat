@@ -1,4 +1,4 @@
-use crate::config::Config;
+use crate::config::SharedConfig;
 use crate::{models::message::Message, network::message};
 use futures_util::stream::{SplitSink, SplitStream};
 use futures_util::{SinkExt, StreamExt};
@@ -10,13 +10,14 @@ use tokio::{
 use tokio_websockets::{MaybeTlsStream, Message as WsMessage, ServerBuilder, WebSocketStream};
 
 pub async fn run(
-    config: Config,
+    config: SharedConfig,
     user_tx: mpsc::Sender<Message>,
     server_ready_tx: oneshot::Sender<()>,
 ) {
-    let (addr, valid_token) = (config.server_addr, config.token);
+    let (addr, valid_token) = (config.server_addr().to_string(), config.token());
     // println!("Запускаем сервер на {}", addr);
     let addr = addr.as_str();
+    let valid_token = valid_token.to_string();
 
     let listener = match TcpListener::bind(addr).await {
         Ok(l) => l,

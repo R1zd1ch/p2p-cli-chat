@@ -1,22 +1,21 @@
-use crate::{models::message::Message, network::message};
+use crate::{config::SharedConfig, models::message::Message, network::message};
 use futures_util::{SinkExt, StreamExt};
 use tokio::sync::{mpsc, oneshot};
 use tokio_websockets::ClientBuilder;
 
 pub async fn connect_to_peer(
-    addr: String,
+    config: SharedConfig,
     user_tx: mpsc::Sender<Message>,
     mut net_rx: mpsc::Receiver<Message>,
-    token: String,
     client_ready_tx: oneshot::Sender<()>,
 ) {
     // println!("Подключаемся к пиру на {}", addr);
-    let addr_clone = addr.clone();
+    let (addr, token) = (config.peer_addr().to_string(), config.token().to_string());
 
     let mut maybe_ready_tx = Some(client_ready_tx);
 
     loop {
-        let uri = match format!("ws://{}", addr_clone).parse() {
+        let uri = match format!("ws://{}", addr).parse() {
             Ok(uri) => uri,
             Err(e) => {
                 eprintln!("Ошибка парсинга URI: {}", e);
@@ -42,7 +41,7 @@ pub async fn connect_to_peer(
 
                 let rx_task = {
                     let user_tx = user_tx.clone();
-                    let addr_clone_for_task = addr_clone.clone();
+                    let addr_clone_for_task = addr.clone();
                     tokio::spawn(async move {
                         while let Some(Ok(msg)) = stream.next().await {
                             if let Some(text) = msg.as_text() {

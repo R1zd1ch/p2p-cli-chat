@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 pub mod cli;
 
 pub trait ConfigProvider {
@@ -6,6 +8,8 @@ pub trait ConfigProvider {
     fn peer_addr(&self) -> &str;
     fn username(&self) -> &str;
 }
+
+pub type SharedConfig = Arc<dyn ConfigProvider + Send + Sync>;
 
 #[derive(Debug, Clone)]
 pub struct Config {
