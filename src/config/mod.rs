@@ -1,3 +1,12 @@
+pub mod cli;
+
+pub trait ConfigProvider {
+    fn server_addr(&self) -> &str;
+    fn token(&self) -> &str;
+    fn peer_addr(&self) -> &str;
+    fn username(&self) -> &str;
+}
+
 #[derive(Debug, Clone)]
 pub struct Config {
     pub server_addr: String,
@@ -6,15 +15,28 @@ pub struct Config {
     pub username: String,
 }
 
-impl Config {
-    pub fn new(server_addr: String, token: String, peer_addr: String, username: String) -> Self {
-        Self {
-            server_addr,
-            token,
-            peer_addr,
-            username,
-        }
+impl ConfigProvider for Config {
+    fn server_addr(&self) -> &str {
+        &self.server_addr
+    }
+    fn token(&self) -> &str {
+        &self.token
+    }
+    fn peer_addr(&self) -> &str {
+        &self.peer_addr
+    }
+    fn username(&self) -> &str {
+        &self.username
     }
 }
 
-pub mod cli;
+impl Config {
+    pub fn from_args(args: &cli::CliArgs) -> Self {
+        Config {
+            server_addr: args.server_addr.clone(),
+            token: args.token.clone(),
+            peer_addr: args.peer_addr.clone(),
+            username: args.username.clone(),
+        }
+    }
+}

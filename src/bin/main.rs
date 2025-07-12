@@ -1,21 +1,16 @@
 use clap::Parser;
 use p2p_cli_chat::config::cli::CliArgs;
+use p2p_cli_chat::handlers::ui::run_ui;
 use tokio::sync::mpsc;
 
 use p2p_cli_chat::config::Config;
-use p2p_cli_chat::handlers::{printer, stdin};
 use p2p_cli_chat::models::message::Message;
 use p2p_cli_chat::network::{client, server};
 
 #[tokio::main]
 async fn main() {
     let args = CliArgs::parse();
-    let config = Config {
-        server_addr: args.server_addr.clone(),
-        token: args.token.clone(),
-        peer_addr: args.peer_addr.clone(),
-        username: args.username.clone(),
-    };
+    let config = Config::from_args(&args);
 
     let (net_tx, net_rx) = mpsc::channel::<Message>(100);
     let (user_tx, user_rx) = mpsc::channel::<Message>(100);
@@ -37,11 +32,14 @@ async fn main() {
         client_ready_tx,
     ));
 
-    tokio::spawn(printer::print_messages(user_rx));
-
     //ждём старта серва и клиента перед вводом сообщений
     let _ = (server_ready_rx.await, client_ready_rx.await);
-
-    // обработка выхода
-    stdin::handle_input(config.username.clone(), config.token.clone(), net_tx).await;
+    run_ui(
+        user_rx,
+        net_tx.clone(),
+        config.username.clone(),
+        config.token.clone(),
+    )
+    .await
+    .unwrap();
 }

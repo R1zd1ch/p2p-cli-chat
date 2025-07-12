@@ -10,7 +10,7 @@ pub async fn connect_to_peer(
     token: String,
     client_ready_tx: oneshot::Sender<()>,
 ) {
-    println!("Подключаемся к пиру на {}", addr);
+    // println!("Подключаемся к пиру на {}", addr);
     let addr_clone = addr.clone();
 
     let mut maybe_ready_tx = Some(client_ready_tx);
@@ -26,7 +26,7 @@ pub async fn connect_to_peer(
 
         match ClientBuilder::from_uri(uri).connect().await {
             Ok((ws_stream, _response)) => {
-                println!("Подключено к {}", addr_clone);
+                // println!("Подключено к {}", addr_clone);
                 if let Some(tx) = maybe_ready_tx.take() {
                     let _ = tx.send(());
                 }

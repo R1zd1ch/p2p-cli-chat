@@ -15,7 +15,7 @@ pub async fn run(
     server_ready_tx: oneshot::Sender<()>,
 ) {
     let (addr, valid_token) = (config.server_addr, config.token);
-    println!("Запускаем сервер на {}", addr);
+    // println!("Запускаем сервер на {}", addr);
     let addr = addr.as_str();
 
     let listener = match TcpListener::bind(addr).await {
@@ -25,11 +25,11 @@ pub async fn run(
             return;
         }
     };
-    println!("WebSocket сервер запущен на {}", addr);
+    // println!("WebSocket сервер запущен на {}", addr);
     let _ = server_ready_tx.send(());
 
     while let Ok((stream, peer_addr)) = listener.accept().await {
-        println!("Новое подключение от {}", peer_addr);
+        // println!("Новое подключение от {}", peer_addr);
         let user_tx = user_tx.clone();
         let valid_token = valid_token.clone();
 
@@ -71,7 +71,7 @@ pub async fn run(
                 let _ = sink.send(WsMessage::text("Неверный токен")).await;
                 return;
             }
-            println!("Клиент {} авторизован", peer_addr);
+            // println!("Клиент {} авторизован", peer_addr);
 
             tokio::spawn(async move { message::receive_messages(stream, sink, user_tx).await });
         });

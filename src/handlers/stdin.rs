@@ -8,8 +8,8 @@ pub async fn handle_input(username: String, token: String, net_tx: Sender<Messag
     let stdin = io::stdin();
     let handle = stdin.lock();
 
-    println!("Введите сообщение (Ctrl+C для выхода)");
-    print!("> ");
+    // println!("Введите сообщение (Ctrl+C для выхода)");
+    // print!("> ");
     io::stdout().flush().unwrap();
 
     for line in handle.lines() {
@@ -22,7 +22,7 @@ pub async fn handle_input(username: String, token: String, net_tx: Sender<Messag
         };
 
         if content.is_empty() {
-            print!("> ");
+            // print!("> ");
             io::stdout().flush().unwrap();
             continue;
         }
@@ -38,7 +38,7 @@ pub async fn handle_input(username: String, token: String, net_tx: Sender<Messag
             eprintln!("Ошибка отправки: {}", e);
         }
 
-        print!("> ");
+        // print!("> ");
         io::stdout().flush().unwrap();
     }
 }
