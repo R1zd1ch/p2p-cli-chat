@@ -20,18 +20,17 @@ async fn main() {
     let (server_ready_tx, server_ready_rx) = tokio::sync::oneshot::channel::<()>();
     let (client_ready_tx, client_ready_rx) = tokio::sync::oneshot::channel::<()>();
 
-    tokio::spawn(server::run(
-        Arc::clone(&config),
-        user_tx.clone(),
-        server_ready_tx,
-    ));
-
-    tokio::spawn(client::connect_to_peer(
+    let mut server =
+        server::WebSocketServer::new(Arc::clone(&config), user_tx.clone(), server_ready_tx);
+    let mut client = client::PeerClient::new(
         Arc::clone(&config),
         user_tx.clone(),
         net_rx,
         client_ready_tx,
-    ));
+    );
+
+    tokio::spawn(async move { server.run().await });
+    tokio::spawn(async move { client.run().await });
 
     //ждём старта серва и клиента перед вводом сообщений
     let _ = (server_ready_rx.await, client_ready_rx.await);
