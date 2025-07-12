@@ -11,7 +11,7 @@ use tokio_websockets::{MaybeTlsStream, Message as WsMessage, ServerBuilder, WebS
 
 pub async fn run(
     config: Config,
-    receiver_tx: mpsc::Sender<Message>,
+    user_tx: mpsc::Sender<Message>,
     server_ready_tx: oneshot::Sender<()>,
 ) {
     let (addr, valid_token) = (config.server_addr, config.token);
@@ -30,7 +30,7 @@ pub async fn run(
 
     while let Ok((stream, peer_addr)) = listener.accept().await {
         println!("Новое подключение от {}", peer_addr);
-        let receiver_tx = receiver_tx.clone();
+        let user_tx = user_tx.clone();
         let valid_token = valid_token.clone();
 
         tokio::spawn(async move {
@@ -73,7 +73,7 @@ pub async fn run(
             }
             println!("Клиент {} авторизован", peer_addr);
 
-            tokio::spawn(async move { message::receive_messages(stream, sink, receiver_tx).await });
+            tokio::spawn(async move { message::receive_messages(stream, sink, user_tx).await });
         });
     }
 }

@@ -2,13 +2,19 @@
 pub struct Config {
     pub server_addr: String,
     pub token: String,
+    pub peer_addr: String,
+    pub username: String,
 }
 
 impl Config {
-    pub fn default_conf() -> Self {
+    pub fn new(server_addr: String, token: String, peer_addr: String, username: String) -> Self {
         Self {
-            server_addr: "127.0.0.1:8080".to_string(),
-            token: "default_token".to_string(),
+            server_addr,
+            token,
+            peer_addr,
+            username,
         }
     }
 }
+
+pub mod cli;

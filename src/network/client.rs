@@ -5,8 +5,8 @@ use tokio_websockets::ClientBuilder;
 
 pub async fn connect_to_peer(
     addr: String,
-    receiver_tx: mpsc::Sender<Message>,
-    mut sender_rx: mpsc::Receiver<Message>,
+    user_tx: mpsc::Sender<Message>,
+    mut net_rx: mpsc::Receiver<Message>,
     token: String,
     client_ready_tx: oneshot::Sender<()>,
 ) {
@@ -41,13 +41,13 @@ pub async fn connect_to_peer(
                 message::send_message(&mut sink, &auth_message).await;
 
                 let rx_task = {
-                    let receiver_tx = receiver_tx.clone();
+                    let user_tx = user_tx.clone();
                     let addr_clone_for_task = addr_clone.clone();
                     tokio::spawn(async move {
                         while let Some(Ok(msg)) = stream.next().await {
                             if let Some(text) = msg.as_text() {
                                 if let Ok(message) = serde_json::from_str::<Message>(text) {
-                                    if let Err(e) = receiver_tx.send(message).await {
+                                    if let Err(e) = user_tx.send(message).await {
                                         eprintln!("Ошибка отправки в канал: {}", e);
                                     }
                                 }
@@ -58,7 +58,7 @@ pub async fn connect_to_peer(
                     })
                 };
 
-                while let Some(mut message) = sender_rx.recv().await {
+                while let Some(mut message) = net_rx.recv().await {
                     message.token = token.clone();
                     message::send_message(&mut sink, &message).await;
                 }
