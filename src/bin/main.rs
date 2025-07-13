@@ -1,13 +1,13 @@
 use std::sync::Arc;
 
 use clap::Parser;
-use p2p_cli_chat::config::cli::CliArgs;
-use p2p_cli_chat::handlers::ui::run_ui;
 use tokio::sync::mpsc;
+use websocket_cli_chat::config::cli::CliArgs;
+use websocket_cli_chat::ui::run_ui;
 
-use p2p_cli_chat::config::{Config, SharedConfig};
-use p2p_cli_chat::models::message::Message;
-use p2p_cli_chat::network::{client, server};
+use websocket_cli_chat::config::{Config, SharedConfig};
+use websocket_cli_chat::models::message::Message;
+use websocket_cli_chat::network::{client, server};
 
 #[tokio::main]
 async fn main() {

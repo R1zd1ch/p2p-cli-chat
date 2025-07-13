@@ -71,7 +71,7 @@ impl PeerClient {
     ) -> Result<(), Box<dyn std::error::Error>> {
         let (mut sink, mut stream) = ws_stream.split();
 
-        // Отправляем сообщение аутентификации
+        // отправка об аунтентификации
         let auth_message = Message::new(
             "system".to_string(),
             "auth".to_string(),
@@ -80,7 +80,7 @@ impl PeerClient {
         );
         message::send_message(&mut sink, &auth_message).await;
 
-        // Запускаем задачу для чтения сообщений
+        // старт задачи получения сообщений
         let user_tx = self.user_tx.clone();
         let addr = self.config.peer_addr().to_string();
         let rx_task = tokio::spawn(async move {
@@ -96,13 +96,13 @@ impl PeerClient {
             eprintln!("Соединение с {} закрыто", addr);
         });
 
-        // Обрабатываем отправку сообщений
+        // обработка отправки сообщений
         while let Some(mut message) = self.net_rx.recv().await {
             message.token = token.clone();
             message::send_message(&mut sink, &message).await;
         }
 
-        // Закрываем соединение
+        // закрытие соединения
         rx_task.abort();
         sink.close().await?;
         Ok(())

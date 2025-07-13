@@ -1,8 +1,5 @@
-start_first:
-	cargo run -- 127.0.0.1:8080 127.0.0.1:8081 r1zzd
+start_vpn_first:
+	cargo run -- 10.8.1.2:8080 10.8.1.2:8081 r1zzd2  my_secret_token
 
-start_second:
-	cargo run -- 127.0.0.1:8081 127.0.0.1:8080 r1zzd2
-
-start_third:
-	cargo run -- 127.0.0.1:8082 127.0.0.1:8081 r1zzd3
+start_vpn_second:
+	cargo run -- 10.8.1.2:8081 10.8.1.2:8080 r1zzd_bebra my_secret_token

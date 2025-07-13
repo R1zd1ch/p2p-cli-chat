@@ -729,27 +729,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a4895175b425cb1f87721b59f0f286c2092bd4af812243672510e1ac53e2e0ad"
 
 [[package]]
-name = "p2p-cli-chat"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "clap",
- "crossterm 0.29.0",
- "dotenvy",
- "env",
- "futures-util",
- "http",
- "ratatui",
- "serde",
- "serde_json",
- "tokio",
- "tokio-websockets",
- "uri",
- "uuid",
- "whoami",
-]
-
-[[package]]
 name = "parking_lot"
 version = "0.12.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1314,6 +1293,27 @@ checksum = "33b6dd2ef9186f1f2072e409e99cd22a975331a6b3591b12c764e0e55c60d5d2"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "websocket-cli-chat"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "clap",
+ "crossterm 0.29.0",
+ "dotenvy",
+ "env",
+ "futures-util",
+ "http",
+ "ratatui",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-websockets",
+ "uri",
+ "uuid",
+ "whoami",
 ]
 
 [[package]]
